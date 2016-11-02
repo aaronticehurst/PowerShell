@@ -15,7 +15,7 @@
                   PS C:\> Invoke-iiLoopedCommand { Resolve-DnsName sma.staff.iinet.net.au} -Loops 100 -SecondsSleep 10
           Check diskspace of isp-osb-dfs1
      .NOTES
-          Written by Aaron Ticehurst 6/12/2012.
+          Written by Aaron Ticehurst 6/12/2016.
 #>
 
 
