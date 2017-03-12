@@ -109,7 +109,7 @@
 			} 		
 										
 									
-			#Catch any terminatiny errors.	
+			#Catch any terminating errors.	
 			Catch{ Throw }	
 			} # Process
 					
