@@ -14,7 +14,7 @@
      .EXAMPLE
 	 	  PS C:\scripts> Get-Computer
 
-			cmdlet Get-ComputerStat.ps1 at command pipeline position 1
+			cmdlet Get-Computer at command pipeline position 1
 			Supply values for the following parameters:
 			ComputerName: COMPUTERNAME
 			Call script name but leave out the computer name and you will be asked to supply the computer name.
