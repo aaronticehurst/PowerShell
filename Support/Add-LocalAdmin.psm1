@@ -9,7 +9,7 @@
 	 .PARAMETER	SamAccountName
 	 	  Username of person to add as admin.
 	 .PARAMETER	Domain
-	 	  Domain of user, default is win2k.		  
+	 	  Domain of user, default is whatever the excutor is logged in as.		  
      .EXAMPLE
 	 	  PS C:\> Add-LocalAdmin -ComputerName TESTCOMPUTER -SamAccountName aticehurst
           Add aticehurst as a local admin of TESTCOMPUTER.
