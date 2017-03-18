@@ -24,7 +24,9 @@
         [string[]]$ComputerName = $env:computername,
         [parameter(ValueFromPipelineByPropertyName=$true,
             ValueFromPipeline=$true)]
-        [string]$Drive
+        [string]$Drive,
+        [Parameter()]
+        [pscredential]$Credential
 				)	
     Begin {	
     }
@@ -32,8 +34,11 @@
 
         Foreach ($Computer in $ComputerName ) {
             $Drive = $Drive + '%'
-            #Get's Computer Hard Drive stats   
-            $Device = get-wmiobject Win32_logicalDisk -ComputerName $Computer -Filter "drivetype = '3' and deviceID like `'$Drive`'" 
+            #Get's Computer Hard Drive stats 
+            if ( $Drive) {
+                $PSBoundParameters.Remove('Drive') | Out-Null
+            }   
+            $Device = get-wmiobject Win32_logicalDisk -Filter "drivetype = '3' and deviceID like `'$Drive`'" @PSBoundParameters 
 
             Foreach ($Device1 in $Device) {
 
