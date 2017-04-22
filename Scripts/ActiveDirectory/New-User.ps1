@@ -1,20 +1,20 @@
 <#
      .SYNOPSIS
-          Creates new users from HR SQL into AD.
+       	Creates new users from HR SQL into AD.
      .DESCRIPTION
-          Creates new users from HR SQL into AD.
+       	Creates new users from HR SQL into AD.
      .PARAMETER  Server
-          Remote DC to connect to.
+       	Remote DC to connect to.
      .PARAMETER	Database
-	 	  SQL server database containing data. 
-	 .PARAMETER	Credential
-	 	  Remote AD credentials.
+	SQL server database containing data. 
+     .PARAMETER	Credential
+	Remote AD credentials.
      .PARAMETER	ShowProgress
-	 	  Show progress if running from command line.        
-	  .EXAMPLE
-	      PS C:\> .\New-User.ps1 -Credential $creds
+	Show progress if running from command line.        
+     .EXAMPLE
+	PS C:\> .\New-User.ps1 -Credential $creds
 		  Creates new users in Active Directory
-     .NOTES
+      .NOTES
           Written by Aaron Ticehurst 7/4/2017.
 #>
 [cmdletbinding(SupportsShouldProcess = $True)]
