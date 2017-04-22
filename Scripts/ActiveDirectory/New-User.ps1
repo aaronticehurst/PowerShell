@@ -14,8 +14,8 @@
      .EXAMPLE
 	PS C:\> .\New-User.ps1 -Credential $creds
 	Creates new users in Active Directory
-      .NOTES
-          Written by Aaron Ticehurst 7/4/2017.
+     .NOTES
+    	Written by Aaron Ticehurst 7/4/2017.
 #>
 [cmdletbinding(SupportsShouldProcess = $True)]
 param(
