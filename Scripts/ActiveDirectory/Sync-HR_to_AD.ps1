@@ -17,11 +17,11 @@
 	Remote AD credentials.
      .PARAMETER	ShowProgress
 	Show progress if running from command line.          
-      .EXAMPLE
+     .EXAMPLE
 	PS C:\> .\Sync-HR_to_AD.ps1 -properties Title, Department, Office, Enabled -Credential $creds
-		  Syncs users from HR into AD with default remote server.
-      .NOTES
-       	Written by Aaron Ticehurst 7/4/2017. 
+	Syncs users from HR into AD with default remote server.
+     .NOTES
+     	Written by Aaron Ticehurst 7/4/2017. 
 #>
 
 [cmdletbinding(SupportsShouldProcess = $True)]
