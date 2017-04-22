@@ -1,27 +1,27 @@
 ﻿<#
      .SYNOPSIS
-          Syncs user properties from HR SQL into AD.
+        Syncs user properties from HR SQL into AD.
      .DESCRIPTION
-          Syncs user attributes from HR SQL into AD. Can join on either SamAccountName or Employeeid.
+        Syncs user attributes from HR SQL into AD. Can join on either SamAccountName or Employeeid.
      .PARAMETER  Server
-          Remote DC to sync against.
+        Remote DC to sync against.
      .PARAMETER  Properties
-          User's properties to sync. Add new properties to validate set if needed. 
+        User's properties to sync. Add new properties to validate set if needed. 
      .PARAMETER	JoinOn
-	 	  Compare SamAccountName or EmployeeID.      
-	 .PARAMETER	SQLServer
-	 	  SQL server to import data from.
+	Compare SamAccountName or EmployeeID.      
+     .PARAMETER	SQLServer
+	SQL server to import data from.
      .PARAMETER	Database
-	 	  SQL server database containing data.
+	SQL server database containing data.
      .PARAMETER	Credential
-	 	  Remote AD credentials.
+	Remote AD credentials.
      .PARAMETER	ShowProgress
-	 	  Show progress if running from command line.          
-	 .EXAMPLE
-	      PS C:\> .\Sync-HR_to_AD.ps1 -properties Title, Department, Office, Enabled -Credential $creds
+	Show progress if running from command line.          
+      .EXAMPLE
+	PS C:\> .\Sync-HR_to_AD.ps1 -properties Title, Department, Office, Enabled -Credential $creds
 		  Syncs users from HR into AD with default remote server.
-     .NOTES
-          Written by Aaron Ticehurst 7/4/2017. 
+      .NOTES
+       	Written by Aaron Ticehurst 7/4/2017. 
 #>
 
 [cmdletbinding(SupportsShouldProcess = $True)]
