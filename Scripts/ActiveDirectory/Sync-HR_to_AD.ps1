@@ -82,10 +82,24 @@ Write-Verbose "LogFile: $LogPath on $env:ComputerName"
 [int]$JoinedUsers = 0
 
 #Change query to match what ever table is needed
+#Need to Transform SQL columns to compare against Active Directory
 $Query = @'
 USE [ITS]
-SELECT *
-FROM tblHRIS_Staff
+SELECT USERNAME AS [SamAccountName],
+CONCAT(firstName,  ' ', Surname) DisplayName, 
+Firstname AS [GivenName],
+Surname,
+Company,
+STAFF_ID AS [EmployeeID], 
+POSITION_TITLE AS [Title],
+LOCATION AS [Office],
+Dept AS [Department],
+Active,
+CASE 
+       WHEN Active = 0 THEN 'False'
+            ELSE 'True'
+       END AS 'Enabled'
+FROM tblHRIS_STAFF
 '@	
 [string]$ConnectionString = "Server=$SQLServer;Database=$Database;Integrated Security=True"
 $connection = New-Object -TypeName System.Data.SqlClient.SqlConnection
@@ -96,43 +110,39 @@ $command.CommandText = $query
 $adapter = New-Object -TypeName System.Data.SqlClient.SqlDataAdapter $command
 $dataset = New-Object -TypeName System.Data.DataSet
 $adapter.Fill($dataset) | Out-Null
-$Users = $dataset.Tables[0] 
+$SQLUsers = $dataset.Tables[0] 
 $connection.Close()   
 
-#Need to Transform SQL columns to compare against Active Directory
-$LocalDCUsers = Write-output $Users | Select @{n = 'DisplayName'; e = {"$($_.firstName)" + " " + "$($_.Surname)"}}, @{n = 'SamAccountName'; e = {$_.Username}}, @{n = 'Enabled'; e = {if ($_.Active -eq 0) {'False'}
-        Else { 'True'}}
-}, `
-                @{n = 'EmployeeID' ; e = {$_.STAFF_ID}}, @{n = 'Title' ; e = {$_.POSITION_TITLE}}, @{n = 'Office' ; e = {$_.LOCATION}}, @{n = 'Department' ; e = {$_.Dept}}, @{n = 'GivenName'; e = {$_.FirstName}}, Surname, Company  
-#Clear the SQL query variable to free memory as no longer needed
-Clear-Variable Users
-Write-Verbose $LocalDCUsers.count              
+
+
+Write-Verbose ($SQLUsers | Measure-Object).Count             
 $RemoteDCUsers = @()
 
 $RemoteDCUsers = get-aduser -Filter {$JoinOn -like "*"} -SearchBase $RemoteOU -server $Server -Credential $Credential -Properties $Properties 
 Write-Verbose $RemoteDCUsers.count
 
-If ($LocalDCUsers -and $RemoteDCUsers) {
+If ($SQLUsers -and $RemoteDCUsers) {
 
     [INT]$RemoteUserCount = $RemoteDCUsers.Count
     [INT]$CountUser = 0
     $User_Property_Hash = New-Object System.Collections.Hashtable -ArgumentList $Properties.count
 
     Foreach ($RemoteDCUser in $RemoteDCUsers) {
+        Start-Sleep -Seconds 1
         If ($ShowProgress) {
             $CountUser++ 
             Write-Progress -Activity "Syncing users" -Status "Checking $CountUser of $RemoteUserCount, $($RemoteDCUser.SamAccountName)" -PercentComplete ($CountUser / $RemoteUserCount * 100)
         }
         $MatchedHRUser = $null
-        If ($JoinOn -eq 'SamAccountName' ) {  $MatchedHRUser = $LocalDCUsers.Where( { $_.SamAccountName -eq $RemoteDCUser.SamAccountName })}
-        If ($JoinOn -eq 'EmployeeID' ) {  $MatchedHRUser = $LocalDCUsers.Where( { $_.EmployeeID -eq $RemoteDCUser.EmployeeID })}
+        If ($JoinOn -eq 'SamAccountName' ) {  $MatchedHRUser = $SQLUsers.Where( { $_.SamAccountName -eq $RemoteDCUser.SamAccountName })}
+        If ($JoinOn -eq 'EmployeeID' ) {  $MatchedHRUser = $SQLUsers.Where( { $_.EmployeeID -eq $RemoteDCUser.EmployeeID })}
 
         If ($MatchedHRUser) {
             
             $JoinedUsers++
                                    
-            Write-Verbose $RemoteDCUser
-            Write-Verbose "$($MatchedHRUser)"
+            #Write-Verbose $RemoteDCUser.SamAccountname
+            #Write-Verbose $MatchedHRUser.SamAccountname 
             Foreach ($Property in $Properties) { 
                 If ($MatchedHRUser.$Property -ne $RemoteDCUser.$Property -and $Property -ne 'Enabled') {
                                
@@ -153,7 +163,6 @@ If ($LocalDCUsers -and $RemoteDCUsers) {
             }
             If ($User_Property_Hash.count -gt 0) { 
                 Write-Verbose $RemoteDCUser.Samaccountname 
-                Write-Verbose $User_Property_Hash                            
                 Set-ADUser -Identity $RemoteDCUser.Samaccountname -Credential $Credential -server $Server @User_Property_Hash 
             }
             $User_Property_Hash.Clear()
