@@ -1,28 +1,36 @@
 ﻿<#
      .SYNOPSIS
-          Syncs user properties from HR SQL into AD.
+        Syncs user properties from HR SQL into AD.
      .DESCRIPTION
-          Syncs user attributes from HR SQL into AD. Can join on either SamAccountName or Employeeid.
+        Syncs user attributes from HR SQL into AD. Can join on either SamAccountName or Employeeid.
      .PARAMETER  Server
-          Remote DC to sync against.
+        Remote DC to sync against.
      .PARAMETER  Properties
+<<<<<<< HEAD
           User's properties to sync. Sync all or a subset. Add new properties to validate set if needed. 
+=======
+        User's properties to sync. Add new properties to validate set if needed. 
+>>>>>>> 65305ed9a19fca6d3e6ec2623775adfa17c629ea
      .PARAMETER	JoinOn
-	 	  Compare SamAccountName or EmployeeID.      
-	 .PARAMETER	SQLServer
-	 	  SQL server to import data from.
+	Compare SamAccountName or EmployeeID.      
+     .PARAMETER	SQLServer
+	SQL server to import data from.
      .PARAMETER	Database
-	 	  SQL server database containing data.
+	SQL server database containing data.
      .PARAMETER	Credential
-	 	  Remote AD credentials.
+	Remote AD credentials.
      .PARAMETER	ShowProgress
-	 	  Show progress if running from command line.          
-	 .EXAMPLE
-	      PS C:\> .\Sync-HR_to_AD.ps1 -properties Title, Department, Office, Enabled -Credential $creds
-		  Syncs users from HR into AD with default remote server.
+	Show progress if running from command line.          
+     .EXAMPLE
+	PS C:\> .\Sync-HR_to_AD.ps1 -properties Title, Department, Office, Enabled -Credential $creds
+	Syncs users from HR into AD with default remote server.
      .NOTES
+<<<<<<< HEAD
           Written by Aaron Ticehurst 7/4/2017. 
           
+=======
+     	Written by Aaron Ticehurst 7/4/2017. 
+>>>>>>> 65305ed9a19fca6d3e6ec2623775adfa17c629ea
 #>
 
 [cmdletbinding(SupportsShouldProcess = $True)]
@@ -170,4 +178,8 @@ If ($SQLUsers -and $RemoteDCUsers) {
 Write-Output "Number of users joined: $JoinedUsers" | out-file $LogPath -Append
 Write-Verbose "Log cleanup"
 
+<<<<<<< HEAD
 Get-ChildItem -path $LogFolder | Where-Object {$_.LastWriteTime -le ((get-date).AddDays(-7))} | remove-item -recurse 
+=======
+Get-ChildItem -path $LogFolder | where {$_.LastWriteTime -le ((get-date).AddHours(-2))} | remove-item -recurse 
+>>>>>>> 65305ed9a19fca6d3e6ec2623775adfa17c629ea
