@@ -6,11 +6,7 @@
      .PARAMETER  Server
         Remote DC to sync against.
      .PARAMETER  Properties
-<<<<<<< HEAD
           User's properties to sync. Sync all or a subset. Add new properties to validate set if needed. 
-=======
-        User's properties to sync. Add new properties to validate set if needed. 
->>>>>>> 65305ed9a19fca6d3e6ec2623775adfa17c629ea
      .PARAMETER	JoinOn
 	Compare SamAccountName or EmployeeID.      
      .PARAMETER	SQLServer
@@ -25,12 +21,8 @@
 	PS C:\> .\Sync-HR_to_AD.ps1 -properties Title, Department, Office, Enabled -Credential $creds
 	Syncs users from HR into AD with default remote server.
      .NOTES
-<<<<<<< HEAD
           Written by Aaron Ticehurst 7/4/2017. 
           
-=======
-     	Written by Aaron Ticehurst 7/4/2017. 
->>>>>>> 65305ed9a19fca6d3e6ec2623775adfa17c629ea
 #>
 
 [cmdletbinding(SupportsShouldProcess = $True)]
@@ -178,8 +170,4 @@ If ($SQLUsers -and $RemoteDCUsers) {
 Write-Output "Number of users joined: $JoinedUsers" | out-file $LogPath -Append
 Write-Verbose "Log cleanup"
 
-<<<<<<< HEAD
-Get-ChildItem -path $LogFolder | Where-Object {$_.LastWriteTime -le ((get-date).AddDays(-7))} | remove-item -recurse 
-=======
-Get-ChildItem -path $LogFolder | where {$_.LastWriteTime -le ((get-date).AddHours(-2))} | remove-item -recurse 
->>>>>>> 65305ed9a19fca6d3e6ec2623775adfa17c629ea
+Get-ChildItem -path $LogFolder | Where-Object {$_.LastWriteTime -le ((get-date).AddDays(-7))} | remove-item -recurse
