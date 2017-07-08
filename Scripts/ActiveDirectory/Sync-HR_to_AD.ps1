@@ -6,7 +6,7 @@
      .PARAMETER  Server
           Remote DC to sync against.
      .PARAMETER  Properties
-          User's properties to sync. Add new properties to validate set if needed. 
+          User's properties to sync. Sync all or a subset. Add new properties to validate set if needed. 
      .PARAMETER	JoinOn
 	 	  Compare SamAccountName or EmployeeID.      
 	 .PARAMETER	SQLServer
@@ -22,6 +22,7 @@
 		  Syncs users from HR into AD with default remote server.
      .NOTES
           Written by Aaron Ticehurst 7/4/2017. 
+          
 #>
 
 [cmdletbinding(SupportsShouldProcess = $True)]
@@ -67,7 +68,7 @@ param(
         ValueFromPipelineByPropertyName = $true,
         ValueFromPipeline = $true,
         Position = 7)]
-    [bool]$ShowProgress = $False
+    [Switch]$ShowProgress = $False
 )
 
 #requires -module ActiveDirectory
@@ -82,7 +83,7 @@ Write-Verbose "LogFile: $LogPath on $env:ComputerName"
 [int]$JoinedUsers = 0
 
 #Change query to match what ever table is needed
-#Need to Transform SQL columns to compare against Active Directory
+#Need to Transform SQL columns to match against Active Directory properties
 $Query = @'
 USE [ITS]
 SELECT USERNAME AS [SamAccountName],
@@ -94,7 +95,6 @@ STAFF_ID AS [EmployeeID],
 POSITION_TITLE AS [Title],
 LOCATION AS [Office],
 Dept AS [Department],
-Active,
 CASE 
        WHEN Active = 0 THEN 'False'
             ELSE 'True'
@@ -113,8 +113,6 @@ $adapter.Fill($dataset) | Out-Null
 $SQLUsers = $dataset.Tables[0] 
 $connection.Close()   
 
-
-
 Write-Verbose ($SQLUsers | Measure-Object).Count             
 $RemoteDCUsers = @()
 
@@ -128,7 +126,7 @@ If ($SQLUsers -and $RemoteDCUsers) {
     $User_Property_Hash = New-Object System.Collections.Hashtable -ArgumentList $Properties.count
 
     Foreach ($RemoteDCUser in $RemoteDCUsers) {
-        Start-Sleep -Seconds 1
+        #Start-Sleep -Seconds 1
         If ($ShowProgress) {
             $CountUser++ 
             Write-Progress -Activity "Syncing users" -Status "Checking $CountUser of $RemoteUserCount, $($RemoteDCUser.SamAccountName)" -PercentComplete ($CountUser / $RemoteUserCount * 100)
@@ -172,4 +170,4 @@ If ($SQLUsers -and $RemoteDCUsers) {
 Write-Output "Number of users joined: $JoinedUsers" | out-file $LogPath -Append
 Write-Verbose "Log cleanup"
 
-Get-ChildItem -path $LogFolder | where {$_.LastWriteTime -le ((get-date).AddHours(-2))} | remove-item -recurse 
+Get-ChildItem -path $LogFolder | Where-Object {$_.LastWriteTime -le ((get-date).AddDays(-7))} | remove-item -recurse 
